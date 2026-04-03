@@ -1,0 +1,6 @@
+@DoctorandDepartmant.api_HostAddress = http://localhost:5115
+
+GET {{DoctorandDepartmant.api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
