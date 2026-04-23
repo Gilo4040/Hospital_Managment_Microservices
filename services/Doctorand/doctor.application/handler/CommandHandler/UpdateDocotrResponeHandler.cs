@@ -34,7 +34,7 @@ namespace doctor.application.handler.CommandHandler
             {
                 Logger.LogInformation($"{id } is not found");
             }
-            var ElementDocor= mapper.Map<Doctor>(request);
+            var ElementDocor= mapper.Map<doctor.core.entity.Doctor>(request);
            var Element =  await IrepositryDoctor.UpdataElement(ElementDocor);
             return  mapper.Map<ResponselistOfDoctors>(Element);
 

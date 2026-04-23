@@ -29,7 +29,7 @@ namespace doctor.application.handler.CommandHandler
         {
 
             var elemnet = request.AddDoctors;
-            var AddElement = Profile.Map<Doctor>(elemnet);
+            var AddElement = Profile.Map<doctor.core.entity.Doctor>(elemnet);
             if (elemnet == null)
                 return false;
             return await Doctors.AddElement(AddElement);

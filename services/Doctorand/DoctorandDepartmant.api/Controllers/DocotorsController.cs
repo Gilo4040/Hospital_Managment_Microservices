@@ -75,7 +75,7 @@ namespace DoctorandDepartmant.api.Controllers
             
             
 
-            var result = new SelectListOfDocotorWithCondation(ExtntionCondition.Express<Doctor, ResponseListOfDoctorWithCondition>(request), x => x.Deparment);
+            var result = new SelectListOfDocotorWithCondation(ExtntionCondition.Express<doctor.core.entity.Doctor, ResponseListOfDoctorWithCondition>(request), x => x.Deparment);
             var elemnt = await mediator.Send(result);
             return Ok(elemnt);
 

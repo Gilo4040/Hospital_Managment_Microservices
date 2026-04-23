@@ -13,9 +13,9 @@ namespace doctor.application.mapper
     {
         public DocotorProfeile() 
         {
-            CreateMap<Doctor, ResponselistOfDoctors>()
+            CreateMap<doctor.core.entity.Doctor, ResponselistOfDoctors>()
                .ForMember(dest => dest.DeparmentResp, opt => opt.MapFrom(src => src.Deparment));
-            CreateMap<Doctor , AddDocotr>().ReverseMap();
+            CreateMap<doctor.core.entity.Doctor , AddDocotr>().ReverseMap();
             CreateMap<Deparment,DepartmantResponse>().ReverseMap();
       
 

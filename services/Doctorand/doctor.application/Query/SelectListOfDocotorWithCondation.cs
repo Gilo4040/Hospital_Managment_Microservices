@@ -12,9 +12,9 @@ namespace doctor.application.Query
 {
     public  class SelectListOfDocotorWithCondation:IRequest<List<ResponselistOfDoctors>>
     {
-        public List< Expression<Func<Doctor, bool>>> Expression { get; set; }
-        public Expression<Func<Doctor,Deparment>> expres {  get; set; }
-        public SelectListOfDocotorWithCondation(List<Expression<Func<Doctor, bool>>> Expr, Expression<Func<Doctor, Deparment>> expressi)
+        public List< Expression<Func<doctor.core.entity.Doctor, bool>>> Expression { get; set; }
+        public Expression<Func<doctor.core.entity.Doctor,Deparment>> expres {  get; set; }
+        public SelectListOfDocotorWithCondation(List<Expression<Func<doctor.core.entity.Doctor, bool>>> Expr, Expression<Func<doctor.core.entity.Doctor, Deparment>> expressi)
         {
             Expression = Expr;
             expres= expressi;

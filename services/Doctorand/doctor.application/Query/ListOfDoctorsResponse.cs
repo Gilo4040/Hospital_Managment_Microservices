@@ -12,8 +12,8 @@ namespace doctor.application.Query
 {
     public  class ListOfDoctorsResponse:IRequest<List<ResponselistOfDoctors>>
     {
-        public Expression<Func<Doctor, Deparment>> exp;
-        public ListOfDoctorsResponse(Expression<Func<Doctor,Deparment >> expression)
+        public Expression<Func<doctor.core.entity.Doctor, Deparment>> exp;
+        public ListOfDoctorsResponse(Expression<Func<doctor.core.entity.Doctor, Deparment >> expression)
         {
             exp = expression;
 

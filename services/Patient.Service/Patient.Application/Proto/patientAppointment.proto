@@ -1,0 +1,17 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Patient.Grpc";
+
+service PatientService {
+  rpc GetPatientById (PatientRequest) returns (PatientRespons);
+}
+
+message PatientRequest {
+  int32 id = 1;
+}
+
+message PatientRespons {
+  int32 id = 1;
+  string name = 2;
+
+}

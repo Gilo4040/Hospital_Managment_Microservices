@@ -21,23 +21,23 @@ namespace Patient.Api.Controllers
             _logger = _log;
         }
         [HttpGet("GetallPatientWithCondation")]
-        public async Task<List<PatientResponse>> GetAllPatientWithCondation([FromQuery] RequestPatient patient)
+        public async Task< ActionResult<List<PatientResponse>>> GetAllPatientWithCondation([FromQuery] RequestPatient patient)
         {
             var elment = new  SelectListOfPatient(patient.expression());
 
              var result = await mediator.Send(elment);
-               Ok( result);
+               return Ok( result);
 
 
        
        }
         [HttpGet("GetallPatient")]
-        public async Task<List<PatientResponse>> GetAllPatient()
+        public async Task< ActionResult<List<PatientResponse>>> GetAllPatient()
         {
             var elment = new ListOfPatiens();
 
             var result = await mediator.Send(elment);
-             Ok (result);
+             return Ok (result);
 
 
 

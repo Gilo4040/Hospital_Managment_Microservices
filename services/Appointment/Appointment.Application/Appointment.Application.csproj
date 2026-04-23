@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	
+
+	<!-- Patient gRPC -->
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\services\Appointment\Appointment.Core\Appointment.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Protobuf Include="..\..\..\services\Doctorand\doctor.application\Protos\DocotorAppointment.Proto"
+				  Link="Protos\DoctorAppointment.proto"
+				  GrpcServices="Client" />
+		
+		
+	</ItemGroup>
+
+	<ItemGroup>
+		<Protobuf Include="..\..\..\services\Patient.Service\Patient.Application\Proto\patientAppointment.proto"
+          Link="Protos\patientAppointment.proto"
+          GrpcServices="Client" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="Command\" />
+	  <Folder Include="Handler\CommandHandler\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Grpc.AspNetCore" Version="2.76.0" />
+	  <PackageReference Include="MediatR" Version="14.1.0" />
+	</ItemGroup>
+
+
+</Project>

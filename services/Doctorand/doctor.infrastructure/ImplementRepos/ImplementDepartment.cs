@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace doctor.infrastructure.ImplementRepos
 {
-    public class ImplementDepartment : implementGeneric< Deparment,Doctor>, IrepositryDepartmant
+    public class ImplementDepartment : implementGeneric< Deparment, doctor.core.entity.Doctor>, IrepositryDepartmant
     {
         private ContextEntity Context;
         public ImplementDepartment(ContextEntity Db) : base(Db)

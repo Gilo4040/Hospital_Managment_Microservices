@@ -15,12 +15,12 @@ namespace doctor.infrastructure.Context
 
         
         }
-        public DbSet<Doctor> Doctors {  get; set; }
+        public DbSet<doctor.core.entity.Doctor> Doctors {  get; set; }
         public DbSet<Deparment> Deparments { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Doctor>().HasKey(x=>x.ID);
-            modelBuilder.Entity<Doctor>().HasOne(x => x.Deparment).WithMany(x => x.Doctors);
+            modelBuilder.Entity<doctor.core.entity.Doctor>().HasKey(x=>x.ID);
+            modelBuilder.Entity<doctor.core.entity.Doctor>().HasOne(x => x.Deparment).WithMany(x => x.Doctors);
             modelBuilder.Entity<Deparment>().HasKey(x=>x.ID);
 
         }
