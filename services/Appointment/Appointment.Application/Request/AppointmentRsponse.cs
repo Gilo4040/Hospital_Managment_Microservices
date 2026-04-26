@@ -17,11 +17,13 @@ namespace Appointment.Application.Request
         public  string Namepatient { get; set; }
 
    
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public  DateTime StartTime { get; set; }
+        public   DateTime EndTime { get; set; }
 
         
         public AppointmentStatus Status { get; set; }
+       public  string? specialization { get; set; }
+       public string ?MedicalHistory {  get; set; }
 
         public string? Notes { get; set; }
     }

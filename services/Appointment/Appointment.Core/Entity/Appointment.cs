@@ -8,7 +8,7 @@ namespace Appointment.Core.Entity
 {
     public  class Appointment
     {
-        public int Id { get; set; }
+       public int Id { get; set; }
 
         // العلاقات
         public int PatientId { get; set; }

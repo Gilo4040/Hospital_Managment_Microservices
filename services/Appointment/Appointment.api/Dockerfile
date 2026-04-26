@@ -2,31 +2,33 @@
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
-# This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["services/Appoinmnent/Appoinment.api/Appointment.api.csproj", "services/Appoinmnent/Appoinment.api/"]
-COPY ["services/Appoinment/Appoinment.Application/Appointment.Application.csproj", "services/Appoinment/Appoinment.Application/"]
-COPY ["services/Appoinment/Appoinment.Core/Appointment.Core.csproj", "services/Appoinment/Appoinment.Core/"]
-COPY ["services/Appoinment/Appoinment.Infrastrucure/Appointment.Infrastrucure.csproj", "services/Appoinment/Appoinment.Infrastrucure/"]
-RUN dotnet restore "./services/Appoinmnent/Appoinment.api/Appointment.api.csproj"
+
+# Copy csproj files
+COPY services/Appointment/Appointment.api/Appointment.api.csproj services/Appointment/Appointment.api/
+COPY services/Appointment/Appointment.Application/Appointment.Application.csproj services/Appointment/Appointment.Application/
+COPY services/Appointment/Appointment.Core/Appointment.Core.csproj services/Appointment/Appointment.Core/
+COPY services/Appointment/Appointment.Infrastrucure/Appointment.Infrastrucure.csproj services/Appointment/Appointment.Infrastrucure/
+
+# Restore
+RUN dotnet restore services/Appointment/Appointment.api/Appointment.api.csproj
+
+# Copy everything
 COPY . .
-WORKDIR "/src/services/Appoinmnent/Appoinment.api"
-RUN dotnet build "./Appointment.api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
+WORKDIR /src/services/Appointment/Appointment.api
+
+RUN dotnet build Appointment.api.csproj -c Release -o /app/build
+
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Appointment.api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish Appointment.api.csproj -c Release -o /app/publish /p:UseAppHost=false
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

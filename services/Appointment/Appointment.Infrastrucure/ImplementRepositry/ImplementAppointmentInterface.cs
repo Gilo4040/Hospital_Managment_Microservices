@@ -25,7 +25,7 @@ namespace Appoinment.Infrastrucure.ImplementRepositry
         }
         public async Task<bool> AddAppoinment(Appointment.Core.Entity.Appointment appointment)
         {
-            using var Connection = new SqlConnection(configuration.GetConnectionString(""));
+            using var Connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
 
             var sql = @"
                     INSERT INTO Appointments 
@@ -42,25 +42,41 @@ namespace Appoinment.Infrastrucure.ImplementRepositry
             return false;
         }
 
-        public async Task<List<Appointment.Core.Entity.Appointment>> appoinments()
+        public async Task<List<Appointment.Core.Entity.Appointment>> appoinments(DateTime date)
         {
-            using var Connection = new SqlConnection(configuration.GetConnectionString(""));
-            
+            using var Connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
 
-            var sql = "SELECT * FROM Appointments";
+            var sql = @"
+             SELECT * FROM Appointments
+            WHERE StartTime >= @StartDate
+           AND StartTime < @EndDate";
 
-             var result= await Connection.QueryAsync<Appointment.Core.Entity.Appointment>(sql);
+            var startDate = date.Date;
+            var endDate = startDate.AddDays(1);
+
+            var result = await Connection.QueryAsync<Appointment.Core.Entity.Appointment>(sql, new
+            {
+                StartDate = startDate,
+                EndDate = endDate
+            });
             return result.ToList();
             
         }
 
-        public async  Task<bool> CancelAppoinment(int Id)
+        public async  Task<bool> CancelAppoinment(int Id,DateTime? date)
         {
             using var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
 
-            var sql = "DELETE FROM Appointments WHERE Id = @Id";
+            var sql = @"
+                DELETE FROM Appointments 
+                   WHERE PatientId = @PatientId 
+                    AND StartTime = @StartTime";
 
-            var rows = await connection.ExecuteAsync(sql, new { id = Id});
+           var rows=  await connection.ExecuteAsync(sql, new
+            {
+                PatientId = Id,
+                StartTime = date
+            });
 
             return rows > 0;
         }
@@ -69,18 +85,21 @@ namespace Appoinment.Infrastrucure.ImplementRepositry
         {
             using var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
 
-           
-            var sql = @"
-                SELECT *
+            var startDate = date.Date;
+            var endDate = startDate.AddDays(1);
+            var sql =  @"
+                 SELECT *
                 FROM Appointments
-                 WHERE DoctorId = @DoctorId
-                 AND CAST(StartTime AS DATE) = @Date
-                    AND Status IN ('Pending', 'Confirmed')";
+               WHERE StartTime >= @StartDate
+              AND StartTime < @EndDate;
+             AND Status IN ('1', '2')";
 
             var booked = (await connection.QueryAsync<Appointment.Core.Entity.Appointment>(sql, new
             {
                 DoctorId = doctorId,
-                Date = date.Date
+                StartDate = startDate,
+                EndDate = endDate
+
             })).ToList();
 
        
@@ -122,9 +141,9 @@ namespace Appoinment.Infrastrucure.ImplementRepositry
               SELECT *
              FROM Appointments
             WHERE DoctorId = @DoctorId
-            AND Status != @Status
-            AND AppointmentDate >= @StartDate
-            AND AppointmentDate<@EndDate";
+             AND Status != @Status
+             AND StartTime >= @StartDate
+              AND StartTime < @EndDate";
 
             var result = await connection.QueryAsync<Appointment.Core.Entity.Appointment>(sql, new
             {
@@ -155,15 +174,15 @@ namespace Appoinment.Infrastrucure.ImplementRepositry
              FROM Appointments
              WHERE PatientId = @PatientId
              AND Status != @Status
-              AND AppointmentDate >= @DateTime
-            AND AppointmentDate<@EndDate";
+             AND StartTime >= @StartDate
+              AND StartTime < @EndDate";
 
 
             var result = await connection.QueryAsync<Appointment.Core.Entity.Appointment>(sql, new
             {
                 PatientId = patientId,
                 Status = Appointment.Core.Entity.AppointmentStatus.Cancelled,
-                DateTime = dateTime,
+                StartDate = dateTime,
                 EndDate = endDate
             });
         

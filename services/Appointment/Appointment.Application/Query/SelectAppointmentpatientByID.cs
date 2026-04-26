@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Appointment.Application.Query
 {
-    public  class SelectAppointmentpatientByID:IRequest<AppointmentRsponse>
+    public  class SelectAppointmentpatientByID:IRequest<List<AppointmentRsponse>>
     {
         public int id {  get; set; }
         public DateTime? date { get; set; } 

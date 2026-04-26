@@ -21,7 +21,7 @@ namespace Patient.Application.Handler.QueryHandler
         {
             var result = await  patientReposit.GetPatientByid(request.id);
 
-            var element = new PatientRespons { Id=result.Id,Name=result.Name};
+            var element = new PatientRespons { Id=result.Id,Name=result.Name, MedicalHistory =result.MedicalHistory};
             return element;
         }
     }

@@ -9,15 +9,33 @@ namespace Patient.Api.extien
         {
             using (var scope = server.Services.CreateScope())
             {
+              
                 var db = scope.ServiceProvider.GetRequiredService<contextgeneric>();
-                await db.Database.MigrateAsync();
-                await Seed(db);
+
+                for (int i = 0; i < 15; i++)
+                {
+                    try
+                    {
+                        await db.Database.MigrateAsync();
+                        await Seed(db);
+                        Console.WriteLine("DB Ready");
+                        return server;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Waiting DB... " + ex.Message);
+                        await Task.Delay(3000);
+                    }
+                }
+
+                Console.WriteLine("Migration skipped");
+                return server;
 
 
 
 
             }
-            return server;
+           
 
         }
         private async static Task Seed(DbContext Db)

@@ -10,16 +10,27 @@ namespace DoctorandDepartmant.api.Exctention
     {
         public static async Task<IHost> migrateDataBase<contextgeneric>(this IHost server) where contextgeneric : DbContext
         {
-            using (var scope = server.Services.CreateScope())
+            using var scope = server.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<contextgeneric>();
+
+            for (int i = 0; i < 15; i++)
             {
-                var db = scope.ServiceProvider.GetRequiredService<contextgeneric>();
-                await db.Database.MigrateAsync();
-                await  Seed(db);
-                await SeedDocotr(db);
-
-
-
+                try
+                {
+                    await db.Database.MigrateAsync();
+                    await Seed(db);
+                    await SeedDocotr(db);
+                    Console.WriteLine("DB Ready");
+                    return server;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Waiting DB... " + ex.Message);
+                    await Task.Delay(3000);
+                }
             }
+
+            Console.WriteLine("Migration skipped");
             return server;
 
         }

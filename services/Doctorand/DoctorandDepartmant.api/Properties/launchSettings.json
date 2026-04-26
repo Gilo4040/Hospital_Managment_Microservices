@@ -16,7 +16,8 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:6566;http://localhost:5116"
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",

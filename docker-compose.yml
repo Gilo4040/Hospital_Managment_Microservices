@@ -1,108 +1,127 @@
 
-services:
-  doctoranddepartmant.api:
-    image: doctoranddepartmantapi
-    build:
-      context: .
-      dockerfile: services/Doctorand/DoctorandDepartmant.api/Dockerfile
-    ports:
-       - "5116:8080"
-    depends_on:
-     - sqlserver
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=DoctorAndDepartmant;User Id=sa;Password=StrongPassword123!;TrustServerCertificate=True;
-    restart: always
 
+
+services:
+
+  # =========================
+  # SQL SERVER
+  # =========================
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sqlserver2022
+    container_name: sqlserver
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=StrongPassword123!
+      - SA_PASSWORD=StrongPassword123!A
     ports:
       - "1433:1433"
     volumes:
       - sqlserver_data:/var/opt/mssql
-    healthcheck:
-      test: ["CMD-SHELL", "sleep 10; /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'StrongPassword123!' -Q 'SELECT 1'"]
-      interval: 10s
-      timeout: 10s
-      retries: 10
     restart: always
-  patient.api:
-   image: ${DOCKER_REGISTRY-}patientapi
-   build:
-    context: .
-    dockerfile: services/Patient.Service/Patient.Api/Dockerfile
-   ports:
-    - "5261:8080"
-   depends_on:
-    - postgres
-      
-   environment:
-    - ASPNETCORE_ENVIRONMENT=Development
-    - ASPNETCORE_URLS=http://+:8080
-    - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=PatientDB;Username=postgres;Password=123456
-   restart: always
- 
+    healthcheck:
+      test: ["CMD-SHELL", "/bin/bash -c 'echo > /dev/tcp/localhost/1433'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # =========================
+  # POSTGRES
+  # =========================
   postgres:
-   image: postgres:15
-   container_name: postgres_db
-   environment:
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: 123456
-    POSTGRES_DB: PatientDB
-   ports:
-    - "5432:5432"
-   volumes:
-    - postgres_data:/var/lib/postgresql/data
-   restart: always
-   healthcheck:
-    test: ["CMD-SHELL", "pg_isready -U postgres -d PatientDB"]
-    interval: 10s
-    timeout: 5s
-    retries: 5
-    start_period: 10s
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: PatientDB
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 10
+      start_period: 10s
 
-
-
-  appointment.api:
-    image: ${DOCKER_REGISTRY-}appointmentapi
+  # =========================
+  # DOCTOR SERVICE
+  # =========================
+  doctoranddepartmant.api:
     build:
       context: .
-      dockerfile: services/Appoinmnent/Appoinment.api/Dockerfile
+      dockerfile: services/Doctorand/DoctorandDepartmant.api/Dockerfile
     ports:
-      - 5025:8080
+      - "5116:8080"
     depends_on:
-      - sqlserver
+      sqlserver:
+        condition: service_healthy
     environment:
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=Appointment;User=SA;Password=Your_password123;TrustServerCertificate=True
-    
-  sqlserver2:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sqlserver2
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=Your_password123
-    ports:
-      - "1433:1433"
-    volumes:
-      - sql_data:/var/opt/mssql 
-    healthcheck:
-      test: ["CMD-SHELL", "sleep 10; /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'Your_password123' -Q 'SELECT 1'"]
-      interval: 10s
-      timeout: 10s
-      retries: 10
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=DoctorAndDepartmant;User Id=sa;Password=StrongPassword123!A;TrustServerCertificate=True
     restart: always
 
+  # =========================
+  # APPOINTMENT SERVICE
+  # =========================
+  appointment.api:
+    build:
+      context: .
+      dockerfile: services/Appointment/Appointment.api/Dockerfile
+    ports:
+      - "5025:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=Appointment;User Id=sa;Password=StrongPassword123!A;TrustServerCertificate=True
+      - GrpcSettings__DoctorUrl=http://doctoranddepartmant.api:8080
+      - GrpcSettings__PatientUrl=http://patient.api:8080
+    restart: always
 
+  # =========================
+  # PATIENT SERVICE
+  # =========================
+  patient.api:
+    build:
+      context: .
+      dockerfile: services/Patient.Service/Patient.Api/Dockerfile
+    ports:
+      - "5261:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=PatientDB;Username=postgres;Password=123456
+    restart: always
+
+  # =========================
+  # PORTAINER
+  # =========================
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    ports:
+      - "9000:9000"
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+# =========================
+# VOLUMES
+# =========================
 volumes:
   sqlserver_data:
   postgres_data:
-  sql_data:
-
+  portainer_data:
 
 
 

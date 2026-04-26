@@ -6,17 +6,28 @@ using doctor.infrastructure.Extenstion;
 
 using System.Reflection;
 using DoctorandDepartmant.api.Exctention;
+using Doctor.Grpc;
+using DoctorandDepartmant.api.Services;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Threading.Tasks;
 
 namespace DoctorandDepartmant.api
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
-
+                builder.WebHost.ConfigureKestrel(options =>
+                {
+                    options.ListenAnyIP(6566, o =>
+                    {
+                        //o.UseHttps();
+                        o.Protocols = HttpProtocols.Http1AndHttp2;
+                    });
+                });
                 // Add services to the container.
 
                 builder.Services.AddControllers();
@@ -27,9 +38,10 @@ namespace DoctorandDepartmant.api
                 builder.Services.AddMediatR(co => co.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), Assembly.GetAssembly(typeof(SelectElementById))));
 
                 builder.Services.ServiceColl();
+                builder.Services.AddGrpc();
 
                 var app = builder.Build();
-                app.migrateDataBase<ContextEntity>();
+                await app.migrateDataBase<ContextEntity>();
 
 
                 if (app.Environment.IsDevelopment())
@@ -40,9 +52,9 @@ namespace DoctorandDepartmant.api
                 }
                 app.UseAuthorization();
 
-
+                app.MapGrpcService<DoctorGrpcService>();
                 app.MapControllers();
-
+            
 
                 app.Run();
 

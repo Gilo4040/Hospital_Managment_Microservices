@@ -13,5 +13,6 @@ message PatientRequest {
 message PatientRespons {
   int32 id = 1;
   string name = 2;
+   string MedicalHistory=3;
 
 }

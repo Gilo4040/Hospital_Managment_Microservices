@@ -24,7 +24,7 @@ namespace Appointment.Application.Handler.QueryHandler
         public async Task<List<(DateTime start, DateTime end)>> Handle(SelectAppointmentDocotorIdAvailable request, CancellationToken cancellationToken)
         {
             logger.LogInformation("the process of DocotorAppointment available");
-           var result= await  appointmentRepositry.GetDoctorAvailable(request.Id,request.Date);
+           var result= await  appointmentRepositry.GetDoctorAvailable(request.Id,request.Date.Value);
             if (result!=null)
                 logger.LogInformation("the process of DocotorAppointment available is scucced");
             return result;
