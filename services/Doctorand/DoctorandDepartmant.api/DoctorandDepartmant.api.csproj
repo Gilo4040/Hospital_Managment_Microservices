@@ -14,11 +14,16 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+	  <PackageReference Include="MassTransit" Version="7.2.2" />
+	  <PackageReference Include="MassTransit.AspNetCore" Version="7.2.2" />
+	  <PackageReference Include="MassTransit.RabbitMQ" Version="7.2.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Infrastructure\EventMassage\EventMassage.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\logging\logging.csproj" />
     <ProjectReference Include="..\doctor.application\doctor.application.csproj" />
     <ProjectReference Include="..\doctor.infrastructure\doctor.infrastructure.csproj" />
   </ItemGroup>

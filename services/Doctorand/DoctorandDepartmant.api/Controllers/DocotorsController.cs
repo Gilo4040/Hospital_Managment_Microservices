@@ -23,7 +23,7 @@ namespace DoctorandDepartmant.api.Controllers
             this._logger = _logger;
 
         }
-        [HttpGet("all",Name = "SelectListOfDocotrs")]
+        [HttpGet("all",Name = "SelectListOfDoctors")]
         [ProducesResponseType(StatusCodes.Status200OK)]
 
         public async Task<ActionResult<IEnumerable<ResponselistOfDoctors>>> SelectListOfDoctors()

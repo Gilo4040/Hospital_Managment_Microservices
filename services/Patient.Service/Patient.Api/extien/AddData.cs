@@ -5,42 +5,52 @@ namespace Patient.Api.extien
 {
     public static class  AddData
     {
-        public static async Task<IHost> migrateDataBase<contextgeneric>(this IHost server) where contextgeneric : DbContext
+        
+         public static async Task<IHost> MigrateDatabase<TContext>(this IHost server)
+where TContext : DbContext
         {
-            using (var scope = server.Services.CreateScope())
+            using var scope = server.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<TContext>();
+
+         
+  
+            for (int i = 0; i < 15; i++)
             {
-              
-                var db = scope.ServiceProvider.GetRequiredService<contextgeneric>();
-
-                for (int i = 0; i < 15; i++)
+                try
                 {
-                    try
-                    {
-                        await db.Database.MigrateAsync();
-                        await Seed(db);
-                        Console.WriteLine("DB Ready");
-                        return server;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Waiting DB... " + ex.Message);
-                        await Task.Delay(3000);
-                    }
+                    Console.WriteLine("Trying DB...");
+                    await db.Database.MigrateAsync();
+                    Console.WriteLine("Migration Done");
+                    break;
                 }
-
-                Console.WriteLine("Migration skipped");
-                return server;
-
-
-
-
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Waiting DB... " + ex.Message);
+                    await Task.Delay(3000);
+                }
             }
-           
 
+         
+            for (int i = 0; i < 15; i++)
+            {
+                try
+                {
+                    await Seed(db);
+                    Console.WriteLine("Seed Done ✅");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Seed Failed ❌ retrying... " + ex.Message);
+                    await Task.Delay(3000);
+                }
+            }
+
+            return server;
         }
         private async static Task Seed(DbContext Db)
         {
-            if (!Db.Set<patient>().Any())
+            if (!await Db.Set<patient>().AnyAsync())
             {
                 var patients = new List<patient>
                                               {
@@ -54,7 +64,7 @@ namespace Patient.Api.extien
                 },
                   new patient
                   {
-                       Id = 2,
+                      
                      Name = "Mona Hassan",
                       
                             age = 35,

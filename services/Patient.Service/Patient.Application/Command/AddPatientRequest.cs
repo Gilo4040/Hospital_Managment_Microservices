@@ -1,5 +1,6 @@
 ﻿using MediatR;
-using Patient.Application.Response;
+using Patient.Application.Request;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,8 @@ namespace Patient.Application.Command
 {
     public class AddPatientRequest:IRequest<bool>
     {
-        public PatientResponse Response { get; set; }
-        public AddPatientRequest(PatientResponse Respone)
+        public RequestPatient Response { get; set; }
+        public AddPatientRequest(RequestPatient Respone)
         { 
            this. Response = Respone;
         

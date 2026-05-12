@@ -1,0 +1,181 @@
+{
+
+  
+    "Routes": [
+
+      
+
+      {
+        "DownstreamPathTemplate": "/api/Appointment/by-patient",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "appointment.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Appointment/by-patient",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AddQueriesToRequest": true
+      },
+      {
+        "DownstreamPathTemplate": "/api/Appointment/by-docotr",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "appointment.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Appointment/by-docotr",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AddQueriesToRequest": true
+      },
+      {
+        "DownstreamPathTemplate": "/api/Appointment/by-docotorAvailable",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "appointment.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Appointment/by-docotorAvailable",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AddQueriesToRequest": true
+      },
+      {
+        "DownstreamPathTemplate": "/api/Appointment/AllAppointment",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "appointment.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Appointment/AllAppointment",
+        "UpstreamHttpMethod": [ "GET" ]
+      },
+      {
+        "DownstreamPathTemplate": "/api/Appointment/AddAppointment",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "appointment.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Appointment/AddAppointment",
+        "UpstreamHttpMethod": [ "POST" ]
+      },
+      {
+        "DownstreamPathTemplate": "/api/Appointment/CancalAppointment",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "appointment.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Appointment/CanacalAppointment",
+        "UpstreamHttpMethod": [ "PUT" ]
+      },
+
+      
+
+      {
+        "DownstreamPathTemplate": "/api/Doctors/all",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "doctoranddepartmant.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Doctors/all",
+        "UpstreamHttpMethod": [ "GET" ]
+      },
+      {
+        "DownstreamPathTemplate": "/api/Doctors/search",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "doctoranddepartmant.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Doctors/search",
+        "UpstreamHttpMethod": [ "GET" ]
+      },
+      {
+        "DownstreamPathTemplate": "/api/Doctors/AddDoctors",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "doctoranddepartmant.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Doctors/AddDoctors",
+        "UpstreamHttpMethod": [ "POST" ]
+      },
+      {
+        "DownstreamPathTemplate": "/api/Doctors",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "doctoranddepartmant.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Doctors/Update",
+        "UpstreamHttpMethod": [ "POST" ]
+      },
+      {
+        "DownstreamPathTemplate": "/api/Doctors/{id}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "doctoranddepartmant.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Doctors/{id}",
+        "UpstreamHttpMethod": [ "DELETE" ]
+      },
+
+
+      {
+        "DownstreamPathTemplate": "/api/Patient/GetallPatientWithCondation",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "patient.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Patient/GetallPatientWithCondation",
+        "UpstreamHttpMethod": [ "GET" ]
+      },
+      {
+        "DownstreamPathTemplate": "/api/Patient/GetallPatient",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "patient.api",
+            "Port": 8080
+          }
+        ],
+        "UpstreamPathTemplate": "/Patient/GetallPatient",
+        "UpstreamHttpMethod": [ "GET" ]
+      }
+
+    ],
+
+    "GlobalConfiguration": {
+      "BaseUrl": "http://localhost:8010"
+    }
+  
+  
+
+}

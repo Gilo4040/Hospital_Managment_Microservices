@@ -1,6 +1,3 @@
-
-
-
 services:
 
   # =========================
@@ -8,42 +5,78 @@ services:
   # =========================
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sqlserver
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=StrongPassword123!A
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "StrongPassword123!A"
+      MSSQL_PID: Express
     ports:
       - "1433:1433"
     volumes:
-      - sqlserver_data:/var/opt/mssql
+      - sqlvolume:/var/opt/mssql
     restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "/bin/bash -c 'echo > /dev/tcp/localhost/1433'"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
 
   # =========================
   # POSTGRES
   # =========================
   postgres:
     image: postgres:15
-    container_name: postgres
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123456
+      POSTGRES_PASSWORD: "123456"
       POSTGRES_DB: PatientDB
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      retries: 10
-      start_period: 10s
+
+  # =========================
+  # RABBITMQ
+  # =========================
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+
+  # =========================
+  # ELASTICSEARCH
+  # =========================
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    restart: unless-stopped
+
+  # =========================
+  # KIBANA
+  # =========================
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
 
   # =========================
   # DOCTOR SERVICE
@@ -55,33 +88,16 @@ services:
     ports:
       - "5116:8080"
     depends_on:
-      sqlserver:
-        condition: service_healthy
+      - sqlserver
+      - rabbitmq
+      - elasticsearch
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=DoctorAndDepartmant;User Id=sa;Password=StrongPassword123!A;TrustServerCertificate=True
-    restart: always
-
-  # =========================
-  # APPOINTMENT SERVICE
-  # =========================
-  appointment.api:
-    build:
-      context: .
-      dockerfile: services/Appointment/Appointment.api/Dockerfile
-    ports:
-      - "5025:8080"
-    depends_on:
-      sqlserver:
-        condition: service_healthy
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=Appointment;User Id=sa;Password=StrongPassword123!A;TrustServerCertificate=True
-      - GrpcSettings__DoctorUrl=http://doctoranddepartmant.api:8080
-      - GrpcSettings__PatientUrl=http://patient.api:8080
-    restart: always
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Server=sqlserver;Database=DoctorAndDepartmant;User Id=sa;Password=StrongPassword123!A;TrustServerCertificate=True
+      ConnectionStrings__RabbitMQ: amqp://guest:guest@rabbitmq:5672
+      ElasticConfiguration__Uri: http://elasticsearch:9200
+    restart: unless-stopped
 
   # =========================
   # PATIENT SERVICE
@@ -93,35 +109,80 @@ services:
     ports:
       - "5261:8080"
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
+      - elasticsearch
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=PatientDB;Username=postgres;Password=123456
-    restart: always
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=PatientDB;Username=postgres;Password=123456
+      ElasticConfiguration__Uri: http://elasticsearch:9200
+    restart: unless-stopped
+
+  # =========================
+  # APPOINTMENT SERVICE
+  # =========================
+  appointment.api:
+    build:
+      context: .
+      dockerfile: services/Appointment/Appointment.api/Dockerfile
+    ports:
+      - "5025:8080"
+    depends_on:
+      - sqlserver
+      - doctoranddepartmant.api
+      - patient.api
+      - rabbitmq
+      - elasticsearch
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Server=sqlserver;Database=Appointment;User Id=sa;Password=StrongPassword123!A;TrustServerCertificate=True
+      ConnectionStrings__RabbitMQ: amqp://guest:guest@rabbitmq:5672
+      GrpcSettings__PatientUrl: http://patient.api:5001
+      GrpcSettings__DoctorUrl: http://doctoranddepartmant.api:5001
+      ElasticConfiguration__Uri: http://elasticsearch:9200
+    restart: unless-stopped
 
   # =========================
   # PORTAINER
   # =========================
   portainer:
     image: portainer/portainer-ce:latest
-    container_name: portainer
-    restart: always
     ports:
       - "9000:9000"
-      - "8000:8000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
+    restart: unless-stopped
 
 # =========================
 # VOLUMES
 # =========================
+  gateway:
+    image: ${DOCKER_REGISTRY-}gateway
+    build:
+      context: .
+      dockerfile: ApiGateway/Gateway/Dockerfile
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Development
+     - ASPNETCORE_URLS=http://+:8080
+
+    depends_on:
+    - doctoranddepartmant.api
+    - patient.api
+    - appointment.api
+
+    ports:
+     - "8010:8080"
+
+
 volumes:
-  sqlserver_data:
+  sqlvolume:
   postgres_data:
   portainer_data:
+  rabbitmq_data:
+  elastic_data:
+ 
 
-
+ 
 

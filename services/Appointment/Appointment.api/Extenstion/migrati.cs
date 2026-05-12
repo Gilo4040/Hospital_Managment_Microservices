@@ -43,14 +43,14 @@ namespace Appoinment.api.Extenstion
                 }
             }
 
-            // 🔗 connect على Appointment
+          
             var dbConnectionString = masterConnectionString
                 .Replace("Database=master", "Database=Appointment");
 
             using var appConnection = new SqlConnection(dbConnectionString);
             await appConnection.OpenAsync();
 
-            // ✅ check table
+           
             var tableExists = await appConnection.QueryFirstOrDefaultAsync<int>(@"
              SELECT COUNT(*) 
             FROM INFORMATION_SCHEMA.TABLES 
@@ -59,7 +59,7 @@ namespace Appoinment.api.Extenstion
 
             if (tableExists == 0)
             {
-                // ✅ create table
+                
                  await appConnection.ExecuteAsync(@"
                 CREATE TABLE Appointments (
                 Id INT IDENTITY PRIMARY KEY,
@@ -68,11 +68,13 @@ namespace Appoinment.api.Extenstion
                 StartTime DATETIME,
                 EndTime DATETIME,
                 Status INT NOT NULL,
-                Notes NVARCHAR(MAX)
+                Notes NVARCHAR(MAX) NULL
+                CONSTRAINT UQ_Doctor_StartTime 
+                  UNIQUE (DoctorId, StartTime)
                 )
                ");
 
-                // ✅ seed data
+               
                 await appConnection.ExecuteAsync(@"
                     INSERT INTO Appointments 
                    (PatientId, DoctorId, StartTime, EndTime, Status, Notes)

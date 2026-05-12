@@ -1,10 +1,13 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Patient.Application.Command;
 using Patient.Application.Exetiention;
 using Patient.Application.Query;
 using Patient.Application.Request;
 using Patient.Application.Response;
+using System.Security.Cryptography;
+using System.Xml.Linq;
 
 namespace Patient.Api.Controllers
 {
@@ -21,7 +24,10 @@ namespace Patient.Api.Controllers
             _logger = _log;
         }
         [HttpGet("GetallPatientWithCondation")]
-        public async Task< ActionResult<List<PatientResponse>>> GetAllPatientWithCondation([FromQuery] RequestPatient patient)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public async Task< ActionResult<List<PatientRequest>>> GetAllPatientWithCondation([FromQuery] RequestPatient patient)
         {
             var elment = new  SelectListOfPatient(patient.expression());
 
@@ -32,16 +38,49 @@ namespace Patient.Api.Controllers
        
        }
         [HttpGet("GetallPatient")]
-        public async Task< ActionResult<List<PatientResponse>>> GetAllPatient()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task< ActionResult<List<PatientRequest>>> GetAllPatient()
         {
-            var elment = new ListOfPatiens();
+            var element = new ListOfPatiens();
 
-            var result = await mediator.Send(elment);
+            var result = await mediator.Send(element);
              return Ok (result);
 
 
 
         }
+        [HttpPost("AddPatient")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+  
+        public async Task<ActionResult> AddPatient(RequestPatient request)
+        {
+            var element = new AddPatientRequest(request);
+            var result = await mediator.Send(element);
+            return NoContent();
+
+        }
+        [HttpPut("updatePatient")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> UpdatePatient(RequestPatient request)
+        {
+            var element = new AddPatientRequest(request);
+            var result = await mediator.Send(element);
+            return NoContent();
+
+        }
+        [HttpDelete("DeletePatient/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> DeletePatient(int id)
+        {
+            var command = new DeletePatientById(id);
+
+            await mediator.Send(command);
+
+            return NoContent();
+        }
+
 
 
     }

@@ -12,7 +12,7 @@ namespace Patient.Application.Query
     public  class SelectNameBYId:IRequest<PatientRespons>
     {
         public int id { get; set; }
-        public SelectNameBYId(PatientRequest patien)
+        public SelectNameBYId(Grpc.PatientRequest patien)
         {
            id =patien.Id;
 

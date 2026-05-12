@@ -12,9 +12,17 @@ namespace Appointment.Application.Request
 
         public int IdDocotr { get; set; }
         public int IdPatient { get; set; }
-     
+
 
 
         public DateTime StartTime { get; set; }
+        public string? Notes { get; set; }
+
+
+
+
+
+
+
     }
 }

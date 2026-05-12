@@ -34,7 +34,7 @@ namespace doctor.application.handler.QueryHandler
 
 
             }
-            var result = new DoctorResponse { Id = elemnt.ID, Name = elemnt.Name, Specialization = elemnt.Description };
+            var result = new DoctorResponse { Id = elemnt.ID, Name = elemnt.Name, Specialization = elemnt.Description ,Phone=elemnt.Phone};
             logger.LogInformation($"{result}   process is succed");
             return result;
         }

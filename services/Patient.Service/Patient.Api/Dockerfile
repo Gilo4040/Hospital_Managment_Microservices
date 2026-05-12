@@ -15,6 +15,8 @@ COPY ["services/Patient.Service/Patient.Api/Patient.Api.csproj", "services/Patie
 COPY ["services/Patient.Service/Patient.Application/Patient.Application.csproj", "services/Patient.Service/Patient.Application/"]
 COPY ["services/Patient.Service/Patient.Core/Patient.Core.csproj", "services/Patient.Service/Patient.Core/"]
 COPY ["services/Patient.Service/Patient.Infrastructure/Patient.Infrastructure.csproj", "services/Patient.Service/Patient.Infrastructure/"]
+COPY ["Infrastructure/logging/logging.csproj", "Infrastructure/logging/"]
+
 RUN dotnet restore "./services/Patient.Service/Patient.Api/Patient.Api.csproj"
 COPY . .
 WORKDIR "/src/services/Patient.Service/Patient.Api"

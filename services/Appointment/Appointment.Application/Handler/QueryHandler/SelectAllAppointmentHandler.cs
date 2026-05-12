@@ -61,7 +61,8 @@ namespace Appointment.Application.Handler.QueryHandler
                     StartTime = ap.StartTime,
                     EndTime = ap.EndTime,
                     Status = ap.Status,
-                    Notes = ap.Notes
+                    Notes = ap.Notes,
+                    PhoneDoctor=docotr.Phone
 
 
 

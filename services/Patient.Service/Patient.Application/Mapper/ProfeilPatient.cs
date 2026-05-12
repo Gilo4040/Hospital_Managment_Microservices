@@ -14,7 +14,7 @@ namespace Patient.Application.Profeil
         public ProfeilPatient()
         { 
 
-            CreateMap<patient,PatientResponse>().ReverseMap();
+            CreateMap<patient,PatientRequest>().ReverseMap();
         
         }
     }

@@ -10,8 +10,8 @@ namespace Patient.Application.Command
 {
     public  class UpdatePatientRequest:IRequest<bool>
     {
-        public PatientResponse Patient { get; set; }
-        public UpdatePatientRequest(PatientResponse patient)
+        public PatientRequest Patient { get; set; }
+        public UpdatePatientRequest(PatientRequest patient)
         {
             this.Patient = patient;
         

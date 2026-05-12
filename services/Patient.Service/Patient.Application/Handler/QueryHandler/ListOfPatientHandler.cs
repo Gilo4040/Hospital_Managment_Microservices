@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Patient.Application.Handler.QueryHandler
 {
-    public class ListOfPatientHandler : IRequestHandler<ListOfPatiens, List<PatientResponse>>
+    public class ListOfPatientHandler : IRequestHandler<ListOfPatiens, List<PatientRequest>>
     {
         public PatientRepositry  Patient;
         public ILogger<ListOfPatientHandler> logger;
@@ -24,10 +24,10 @@ namespace Patient.Application.Handler.QueryHandler
             mapper = mapp;
 
         }
-        public async Task<List<PatientResponse>> Handle(ListOfPatiens request, CancellationToken cancellationToken)
+        public async Task<List<PatientRequest>> Handle(ListOfPatiens request, CancellationToken cancellationToken)
         {
              var elemnt=  await Patient.ListofPatients();
-             return    mapper.Map<List<PatientResponse>>(elemnt);
+             return    mapper.Map<List<PatientRequest>>(elemnt);
            
            
         }

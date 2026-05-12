@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Patient.Application.Response
 {
-    public class PatientResponse
+    public class PatientRequest
     {
         public int? Id { get; set; }
         public string? Name { get; set; }

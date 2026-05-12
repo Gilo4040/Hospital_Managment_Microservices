@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Patient.Application.Validator
 {
-    public class SelectValidator:AbstractValidator<PatientResponse>
+    public class SelectValidator:AbstractValidator<PatientRequest>
     {
         public SelectValidator()
         

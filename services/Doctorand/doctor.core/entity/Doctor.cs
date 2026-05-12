@@ -15,12 +15,11 @@ namespace doctor.core.entity
         {
             get; set;
         }
+        public string Phone { get; set; }
         public string Description { get; set; }
         public int DepartmantID {  get; set; }
         [ForeignKey(nameof(DepartmantID))]
-        public TimeSpan? StartTime { get; set; }
-        public TimeSpan ?EndTime { get; set; }
-        public int? SlotDuration { get; set; }
+       
         public Deparment Deparment { get; set; }
 
     }

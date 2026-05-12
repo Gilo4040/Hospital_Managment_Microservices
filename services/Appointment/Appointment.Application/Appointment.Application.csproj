@@ -9,7 +9,9 @@
 
 	<!-- Patient gRPC -->
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\Infrastructure\EventMassage\EventMassage.csproj" />
 		<ProjectReference Include="..\..\..\services\Appointment\Appointment.Core\Appointment.Core.csproj" />
+		
 	</ItemGroup>
 	<ItemGroup>
 		<Protobuf Include="..\..\..\services\Doctorand\doctor.application\Protos\DocotorAppointment.Proto" Link="Protos\DoctorAppointment.proto" GrpcServices="Client" />
@@ -21,6 +23,9 @@
 		<Protobuf Include="..\..\..\services\Patient.Service\Patient.Application\Proto\patientAppointment.proto" Link="Protos\patientAppointment.proto" GrpcServices="Client" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="MassTransit" Version="7.2.2" />
+		<PackageReference Include="MassTransit.AspNetCore" Version="7.2.2" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="7.2.2" />
 	  <PackageReference Include="Grpc.AspNetCore" Version="2.76.0" />
 	  <PackageReference Include="MediatR" Version="14.1.0" />
 	</ItemGroup>

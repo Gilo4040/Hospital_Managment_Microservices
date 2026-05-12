@@ -24,6 +24,8 @@ COPY ["services/Doctorand/DoctorandDepartmant.api/DoctorandDepartmant.api.csproj
 COPY ["services/Doctorand/doctor.application/doctor.application.csproj", "services/Doctorand/doctor.application/"]
 COPY ["services/Doctorand/doctor.core/doctor.core.csproj", "services/Doctorand/doctor.core/"]
 COPY ["services/Doctorand/doctor.infrastructure/doctor.infrastructure.csproj", "services/Doctorand/doctor.infrastructure/"]
+COPY ["Infrastructure/EventMassage/EventMassage.csproj", "Infrastructure/EventMassage/"]
+COPY ["Infrastructure/logging/logging.csproj", "Infrastructure/logging/"]
 
 # 2?? Restore dependencies ???
 RUN dotnet restore "services/Doctorand/DoctorandDepartmant.api/DoctorandDepartmant.api.csproj"

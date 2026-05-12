@@ -1,4 +1,4 @@
-
+﻿
 using doctor.application.Extenstion2;
 using doctor.application.Query;
 using doctor.infrastructure.Context;
@@ -10,6 +10,10 @@ using Doctor.Grpc;
 using DoctorandDepartmant.api.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Threading.Tasks;
+using MassTransit;
+using DoctorandDepartmant.api.Consumer;
+using logging;
+using Serilog;
 
 namespace DoctorandDepartmant.api
 {
@@ -20,13 +24,22 @@ namespace DoctorandDepartmant.api
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
-                builder.WebHost.ConfigureKestrel(options =>
+                builder.Host.UseSerilog(follow.ConfigureLogger);
+                builder.WebHost.ConfigureKestrel( options =>
                 {
-                    options.ListenAnyIP(6566, o =>
+                    options.ListenAnyIP(8080, o =>
                     {
-                        //o.UseHttps();
-                        o.Protocols = HttpProtocols.Http1AndHttp2;
+                        o.Protocols = HttpProtocols.Http1;
+                       
+
                     });
+                    options.ListenAnyIP(5001, o =>
+                    {
+                       
+                       
+                        o.Protocols = HttpProtocols.Http2;
+                    });
+
                 });
                 // Add services to the container.
 
@@ -38,7 +51,22 @@ namespace DoctorandDepartmant.api
                 builder.Services.AddMediatR(co => co.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), Assembly.GetAssembly(typeof(SelectElementById))));
 
                 builder.Services.ServiceColl();
-                builder.Services.AddGrpc();
+                builder.Services.AddGrpc(options => { options.EnableDetailedErrors = true; });
+                builder.Services.AddMassTransit(o => {
+                    o.AddConsumer<ConsumerEvent>();
+                    o.UsingRabbitMq((c, b) =>
+                    {
+                        var connection = builder.Configuration.GetConnectionString("RabbitMQ");
+
+                        b.Host(connection);
+                        b.ReceiveEndpoint("appointment-queue", e =>
+                        {
+                            e.ConfigureConsumer<ConsumerEvent>(c);
+                        });
+
+                    });
+                });
+                builder.Services.AddMassTransitHostedService();
 
                 var app = builder.Build();
                 await app.migrateDataBase<ContextEntity>();
@@ -52,9 +80,9 @@ namespace DoctorandDepartmant.api
                 }
                 app.UseAuthorization();
 
-                app.MapGrpcService<DoctorGrpcService>();
+               
                 app.MapControllers();
-            
+                app.MapGrpcService<DoctorGrpcService>();
 
                 app.Run();
 

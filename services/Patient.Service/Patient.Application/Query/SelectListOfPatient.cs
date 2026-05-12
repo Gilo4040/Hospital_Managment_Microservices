@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Patient.Application.Query
 {
-    public class SelectListOfPatient :IRequest<List<PatientResponse>>
+    public class SelectListOfPatient :IRequest<List<PatientRequest>>
     {
         public List< Expression<Func<patient,bool>>> Expression;
         public SelectListOfPatient(List<Expression<Func<patient, bool>>> Expres )

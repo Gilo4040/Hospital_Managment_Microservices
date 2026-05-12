@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Patient.Application.Handler.QueryHandler
 {
-    public class SelectPatientByIdHandler : IRequestHandler<SelectPatientByid, PatientResponse>
+    public class SelectPatientByIdHandler : IRequestHandler<SelectPatientByid, PatientRequest>
     {
         public PatientRepositry repostiry;
         public IMapper mapper;
@@ -25,7 +25,7 @@ namespace Patient.Application.Handler.QueryHandler
             this.logger = logg;
         
         }
-        public async Task<PatientResponse> Handle(SelectPatientByid request, CancellationToken cancellationToken)
+        public async Task<PatientRequest> Handle(SelectPatientByid request, CancellationToken cancellationToken)
         {
             logger.LogInformation("the process of selectElemntByid start");
             var patient= await repostiry.GetPatientByid(request.Id);
@@ -34,7 +34,7 @@ namespace Patient.Application.Handler.QueryHandler
 
             }
             logger.LogInformation($"Patient id: {request.Id} tne procees is done");
-           return mapper.Map<PatientResponse>(patient);
+           return mapper.Map<PatientRequest>(patient);
            
         }
     }

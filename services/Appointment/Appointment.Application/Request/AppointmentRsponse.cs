@@ -24,6 +24,7 @@ namespace Appointment.Application.Request
         public AppointmentStatus Status { get; set; }
        public  string? specialization { get; set; }
        public string ?MedicalHistory {  get; set; }
+        public string PhoneDoctor {  get; set; }
 
         public string? Notes { get; set; }
     }
