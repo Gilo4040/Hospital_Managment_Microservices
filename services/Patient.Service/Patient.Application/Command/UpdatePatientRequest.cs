@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Patient.Application.Request;
 using Patient.Application.Response;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,8 @@ namespace Patient.Application.Command
 {
     public  class UpdatePatientRequest:IRequest<bool>
     {
-        public PatientRequest Patient { get; set; }
-        public UpdatePatientRequest(PatientRequest patient)
+        public RequestPatient Patient { get; set; }
+        public UpdatePatientRequest(RequestPatient patient)
         {
             this.Patient = patient;
         

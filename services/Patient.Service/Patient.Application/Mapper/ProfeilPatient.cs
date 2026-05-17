@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Patient.Application.Request;
 using Patient.Application.Response;
 using Patient.Core.Entity;
 using System;
@@ -14,7 +15,8 @@ namespace Patient.Application.Profeil
         public ProfeilPatient()
         { 
 
-            CreateMap<patient,PatientRequest>().ReverseMap();
+            CreateMap<patient,RequestPatient>().ReverseMap();
+            CreateMap<patient, PatientResponse>().ReverseMap();
         
         }
     }

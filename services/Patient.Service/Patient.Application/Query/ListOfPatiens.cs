@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Patient.Application.Query
 {
-    public  class ListOfPatiens:IRequest<List<PatientRequest>>
+    public  class ListOfPatiens:IRequest<List<PatientResponse>>
     {
     }
 }

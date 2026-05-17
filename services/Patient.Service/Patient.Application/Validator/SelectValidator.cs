@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Patient.Application.Request;
 using Patient.Application.Response;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Patient.Application.Validator
 {
-    public class SelectValidator:AbstractValidator<PatientRequest>
+    public class SelectValidator:AbstractValidator<RequestPatient>
     {
         public SelectValidator()
         

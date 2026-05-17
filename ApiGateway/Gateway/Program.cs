@@ -1,4 +1,5 @@
 
+using Azure;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
@@ -13,31 +14,39 @@ namespace Gateway
             // Add services to the container.
 
             builder.Services.AddControllers();
-            builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json",optional:true, reloadOnChange:true);
+            builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
             builder.Services.AddOcelot(builder.Configuration);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    
+            // builder.Services.AddSwaggerForOcelot(builder.Configuration);
             builder.Services.AddEndpointsApiExplorer();
-            //builder.Services.AddSwaggerGen();
+          
+           // builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Swagger UI (Gateway only - optional)
             if (app.Environment.IsDevelopment())
             {
-               // app.UseSwagger();
-                //app.UseSwaggerUI();
+                //app.UseSwagger();
+                //app.UseSwaggerUI(c =>
+                //{
+                //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Gateway API");
+                //});
             }
-            app.UseRouting();
 
             app.UseHttpsRedirection();
 
+            app.UseRouting();
+
             app.UseAuthorization();
+            app.UseEndpoints
+                (end=>end.MapGet("/",async context => { context.Response.WriteAsync("hello"); } ));
 
 
-            app.UseEndpoints(o=>o.Map("/", async c => { c.Response.WriteAsync("hello"); } ));
-             await app.UseOcelot();    
-             await app.RunAsync();
+            await app.UseOcelot();
+
+            await app.RunAsync();
         }
     }
+
 }

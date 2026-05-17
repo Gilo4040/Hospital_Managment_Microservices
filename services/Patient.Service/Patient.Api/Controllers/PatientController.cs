@@ -13,75 +13,72 @@ namespace Patient.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   
     public class PatientController : ControllerBase
     {
-        public IMediator mediator;
-        public ILogger<PatientController> _logger;
-         public PatientController(IMediator medi, ILogger<PatientController> _log) 
-        
-        { 
-            mediator = medi;
-            _logger = _log;
-        }
-        [HttpGet("GetallPatientWithCondation")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        private readonly IMediator _mediator;
+        private readonly ILogger<PatientController> _logger;
 
-        public async Task< ActionResult<List<PatientRequest>>> GetAllPatientWithCondation([FromQuery] RequestPatient patient)
+        public PatientController(IMediator mediator, ILogger<PatientController> logger)
         {
-            var elment = new  SelectListOfPatient(patient.expression());
+            _mediator = mediator;
+            _logger = logger;
+        }
 
-             var result = await mediator.Send(elment);
-               return Ok( result);
+     
+        [HttpGet("filter")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<PatientResponse>>> GetPatientsByCondition(
+            [FromQuery] RequestPatient patient)
+        {
+            var query = new SelectListOfPatient(patient.expression());
+            var result = await _mediator.Send(query);
 
+            return Ok(result);
+        }
+
+     
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<PatientResponse>>> GetAllPatients()
+        {
+            var query = new ListOfPatiens();
+            var result = await _mediator.Send(query);
+
+            return Ok(result);
+        }
 
        
-       }
-        [HttpGet("GetallPatient")]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<ActionResult> AddPatient([FromBody] RequestPatient request)
+        {
+            var command = new AddPatientRequest(request);
+            await _mediator.Send(command);
+
+            return Created();
+        }
+
+       
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task< ActionResult<List<PatientRequest>>> GetAllPatient()
+        public async Task<ActionResult> UpdatePatient([FromBody] RequestPatient request)
         {
-            var element = new ListOfPatiens();
+            var command = new Application.Command.UpdatePatientRequest(request);
+            await _mediator.Send(command);
 
-            var result = await mediator.Send(element);
-             return Ok (result);
-
-
-
+            return Ok();
         }
-        [HttpPost("AddPatient")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-  
-        public async Task<ActionResult> AddPatient(RequestPatient request)
-        {
-            var element = new AddPatientRequest(request);
-            var result = await mediator.Send(element);
-            return NoContent();
 
-        }
-        [HttpPut("updatePatient")]
+       
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> UpdatePatient(RequestPatient request)
-        {
-            var element = new AddPatientRequest(request);
-            var result = await mediator.Send(element);
-            return NoContent();
-
-        }
-        [HttpDelete("DeletePatient/{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeletePatient(int id)
         {
             var command = new DeletePatientById(id);
-
-            await mediator.Send(command);
+            await _mediator.Send(command);
 
             return NoContent();
         }
-
-
-
     }
 }

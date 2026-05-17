@@ -16,6 +16,7 @@ namespace doctor.infrastructure.Extenstion
             
             for (int i=0; i<expressions.Count();i++)
             {
+              
                list= list.Where(expressions[i]);
 
             }

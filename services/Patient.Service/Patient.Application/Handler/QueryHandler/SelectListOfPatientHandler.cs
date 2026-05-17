@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Patient.Application.Handler.QueryHandler
 {
-    public class SelectListOfPatientHandler : IRequestHandler<SelectListOfPatient, List<Response.PatientRequest>>
+    public class SelectListOfPatientHandler : IRequestHandler<SelectListOfPatient, List<Response.PatientResponse>>
     {
          private readonly IMapper Map;
         public Core.Repositry.PatientRepositry patientReposit;
@@ -25,10 +25,10 @@ namespace Patient.Application.Handler.QueryHandler
         
         }
 
-        public async Task<List<Response.PatientRequest>> Handle(SelectListOfPatient request, CancellationToken cancellationToken)
+        public async Task<List<Response.PatientResponse>> Handle(SelectListOfPatient request, CancellationToken cancellationToken)
         {
             var patients = await patientReposit.ListOfPatientWithCondation(request.Expression);
-            var result = Map.Map<List<PatientRequest>>(patients);
+            var result = Map.Map<List<PatientResponse>>(patients);
             return result;
 
 

@@ -24,13 +24,42 @@ namespace doctor.application.Condition
                 var proValue = propraty.GetValue(baseCl);
                 if (proValue == null )
                     continue;
+
                 
                 var entityProp = typeof(T).GetProperty(propraty.Name);
-                if (entityProp == null )
+                if (entityProp == null)
                     continue;
+                //if (entityProp.PropertyType == typeof(string))
+                //{
+
+                //    if (proValue.ToString().Length <= 3)
+                //    {
+                //        var Par = Expression.Parameter(typeof(T), "x");
+
+                //        var propertAccess = Expression.Property(Par, entityProp);
+                //        // x.departmanId
+
+                //        var constan = Expression.Constant(proValue, entityProp.PropertyType); // typeof int , 1
+                //        var equa = Expression.Equal(propertAccess, constan);
+
+                //        var lambd = Expression.Lambda<Func<T, bool>>(equa, Par);
+
+                //        expression.Add(lambd);
+
+
+
+
+
+                //    }
+
+
+                //}
+        
                 var Para = Expression.Parameter(typeof(T),"x");
             
-                var propertyAccess = Expression.Property(Para, entityProp);// x.departmanId
+                var propertyAccess = Expression.Property(Para, entityProp);
+                // x.departmanId
+
                 var constant = Expression.Constant(proValue,entityProp.PropertyType); // typeof int , 1
                 var equal = Expression.Equal(propertyAccess, constant);
 

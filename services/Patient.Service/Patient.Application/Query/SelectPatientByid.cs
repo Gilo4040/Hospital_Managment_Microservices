@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Patient.Application.Query
 {
-    public  class SelectPatientByid:IRequest<PatientRequest>
+    public  class SelectPatientByid:IRequest<PatientResponse>
     {
         public int Id { get; set; }
         public SelectPatientByid( int id )
